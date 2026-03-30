@@ -1,6 +1,21 @@
 import random
 import time
 
+# Doctor definitions
+DOCTOR_LIST = [
+    {"id": 0, "type": "general_physician", "treats": [0, 1, 2, 3, 4], "can_treat": [5, 6]},
+    {"id": 1, "type": "cardiologist", "treats": [7, 8, 9], "can_treat": [5, 10]},
+    {"id": 2, "type": "dermatologist", "treats": [11, 12, 13], "can_treat": [14, 15]},
+    {"id": 3, "type": "neurologist", "treats": [16, 17, 18], "can_treat": [19, 20]},
+    {"id": 4, "type": "orthopedic", "treats": [21, 22], "can_treat": [23, 24]},
+    {"id": 5, "type": "pediatrician", "treats": [25, 26, 27], "can_treat": [0, 1, 2]},
+    {"id": 6, "type": "gynecologist", "treats": [28, 29, 30], "can_treat": [31, 32]},
+    {"id": 7, "type": "psychiatrist", "treats": [33, 34], "can_treat": [35, 36]},
+    {"id": 8, "type": "ent_specialist", "treats": [37, 38], "can_treat": [39, 40]}
+]
+
+CAN_DIE = [5, 7, 8, 9, 10, 16, 17]
+
 class HospitalEnv:
     def __init__(self, config):
         self.config = config
@@ -27,9 +42,24 @@ class HospitalEnv:
 
     def state(self):
         return {
-            "patients": list(self.patients.values()),
-            "doctors": list(self.busy_doctors.keys()),
-            "time": self.step_count
+            "patients": [
+                {
+                    "id": int(p),
+                    "condition_id": int(self.patients[p]["condition_id"]),
+                    "severity": float(self.patients[p]["severity"]),
+                    "time_left": float(self.patients[p]["time_left"])
+                }
+                for p in self.patients
+            ],
+            "doctors": [
+                {
+                    "id": int(d),
+                    "type": str(DOCTOR_LIST[d]["type"]),
+                    "busy": bool(d in self.busy_doctors),
+                }
+                for d in self.doctors
+            ],
+            "time": int(self.step_count)
         }
 
     def generate_patient(self):
@@ -40,14 +70,16 @@ class HospitalEnv:
         self.patient_counter += 1
         self.total_generated += 1
 
+        condition_id = random.randint(0, 41)
         severity = random.randint(1, 10)
 
         self.patients[self.patient_counter] = {
             "id": self.patient_counter,
+            "condition_id": condition_id,
             "severity": severity,
             "time_left": random.randint(10, 30),
             "time_takes": random.randint(2, 6),
-            "can_die": severity >= 8,
+            "can_die": condition_id in CAN_DIE,
             "arrival_time": time.time()
         }
 

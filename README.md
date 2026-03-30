@@ -1,3 +1,14 @@
+---
+title: Hospital Triage Environment
+emoji: 🐍
+colorFrom: green
+colorTo: blue
+sdk: docker
+short_description: AI system to allocate doctors to patients dynamically
+python_version: "3.11"
+app_file: app.py
+pinned: false
+---
 # Hospital Triage Environment
 
 An AI-powered hospital resource allocation simulation that models real-world triage and doctor-patient assignment challenges.
