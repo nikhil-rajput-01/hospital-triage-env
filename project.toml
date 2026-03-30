@@ -1,0 +1,17 @@
+[project]
+name = "hospital-triage-env"
+version = "0.1.0"
+description = "Hospital triage OpenEnv environment"
+authors = [{name = "Nikhil"}]
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "openai",
+    "requests"
+]
+
+[tool.setuptools]
+packages = ["."]
