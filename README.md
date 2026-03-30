@@ -36,7 +36,7 @@ hospital-triage-env/
 ├── grader.py           # Scoring and evaluation system
 ├── requirements.txt    # Python dependencies
 ├── Dockerfile          # Docker container configuration
-├── openenv.yml         # Environment configuration file
+├── openenv.yaml         # Environment configuration file
 ├── main.py             # For running full logic in terminal 
 └── README.md           # This file
 ```
