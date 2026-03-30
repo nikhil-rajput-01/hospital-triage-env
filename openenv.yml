@@ -1,0 +1,16 @@
+name: hospital-triage-env
+
+environment:
+  endpoints:
+    reset: POST /reset?task={task}
+    step: POST /step
+    state: GET /state
+
+tasks:
+  - name: easy
+  - name: medium
+  - name: hard
+
+evaluation:
+  metric: score
+  range: [0.0, 1.0]
