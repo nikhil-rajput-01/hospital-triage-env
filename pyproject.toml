@@ -10,8 +10,12 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "openai",
-    "requests"
+    "requests",
+    "openenv"
 ]
 
 [tool.setuptools]
 packages = ["."]
+
+[project.scripts]
+server = "server.app:main"

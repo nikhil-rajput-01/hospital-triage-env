@@ -29,16 +29,19 @@ The goal is to maximize patient outcomes by making optimal assignment decisions.
 ```
 hospital-triage-env/
 ├── app.py              # Gradio web interface for simulation
-├── server.py           # FastAPI backend server
+├── server.py           # FastAPI backend server entrypoint
 ├── env.py              # Hospital environment core logic
-├── inference.py        # AI agent inference module
+├── inference.py        # AI agent inference module and action policy
 ├── tasks.py            # Task configurations (easy/medium/hard)
 ├── grader.py           # Scoring and evaluation system
+├── main.py             # CLI simulation runner
 ├── requirements.txt    # Python dependencies
 ├── Dockerfile          # Docker container configuration
-├── openenv.yaml         # Environment configuration file
-├── main.py             # For running full logic in terminal 
-└── README.md           # This file
+├── openenv.yml         # Environment configuration file
+├── README.md           # This file
+└── server/
+    ├── __init__.py
+    └── app.py          # FastAPI application module
 ```
 
 ## Key Features
@@ -216,3 +219,23 @@ docker run -p 8000:8000 hospital-triage
 - **requests** - HTTP client
 
 See `requirements.txt` for full list.
+
+## Testing
+
+Run the core simulation checks and integration tests:
+
+```bash
+pytest -q
+```
+
+Add environment variable overrides for CI:
+
+```bash
+export API_BASE_URL="https://openai.com/api/v1"
+export HF_TOKEN="your_api_key_here"
+export MODEL_NAME="openai/gpt-4o-mini"
+```
+
+## License
+
+MIT License (or change to your preferred license).
