@@ -59,9 +59,9 @@ Rules:
 
 Return ONLY JSON:
 {{
-  "type": "assign",
-  "doctor_id": int,
-  "patient_id": int
+    "type": "assign",
+    "doctor_id": int,
+    "patient_id": int
 }}
 
 If no action:
@@ -97,7 +97,7 @@ def run_simulation(task="easy"):
     response = requests.post(reset_url, json={"task": task})
     if response.status_code != 200:
         print("Failed to reset environment")
-        return 0.0
+        return 0
     print(f"[START] task={task}", flush=True)
     state = response.json()
     total_reward = 0
@@ -122,7 +122,7 @@ def run_simulation(task="easy"):
             break
 
     # Normalize score to 0-1
-    score = max(0.0, min(1.0, (total_reward + 1000) / 2000))  # rough normalization
+    score = max(1e-16, min(1, (total_reward + 1000) / 2000))  # rough normalization
     print(f"[END] task={task} score={score} steps={step_count}", flush=True)
     return score
 
