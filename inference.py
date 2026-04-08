@@ -92,12 +92,13 @@ Current State:
         return {"type": "noop"}
 
 def run_simulation(task="easy"):
-    # Reset environment
+
     reset_url = "http://localhost:7860/reset"
     response = requests.post(reset_url, json={"task": task})
     if response.status_code != 200:
-        print("Failed to reset environment")
-        return 0
+        print(f"[START] task={task}", flush=True)
+        print(f"[END] task={task} score=0.0 steps=0", flush=True)
+        return 0.0
     print(f"[START] task={task}", flush=True)
     state = response.json()
     total_reward = 0
@@ -108,7 +109,7 @@ def run_simulation(task="easy"):
         step_url = "http://localhost:7860/step"
         response = requests.post(step_url, json=action)
         if response.status_code != 200:
-            print("Failed to step environment")
+            print("Failed to step environment", flush=True)
             break
 
         result = response.json()
@@ -121,10 +122,9 @@ def run_simulation(task="easy"):
         if done:
             break
 
-    # Normalize score to 0-1
-    score = max(1e-16, min(1, (total_reward + 1000) / 2000))  # rough normalization
-    print(f"[END] task={task} score={score} steps={step_count}", flush=True)
-    return score
+    final_score = result.get("info", {}).get("score", 0.0) if 'result' in locals() else 0.0
+    print(f"[END] task={task} score={final_score} steps={step_count}", flush=True)
+    return final_score
 
 if __name__ == "__main__":
     for task in ["easy", "medium", "hard"]:
