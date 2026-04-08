@@ -1,6 +1,6 @@
 import random
 import time
-
+import math
 # Doctor definitions
 DOCTOR_LIST = [
     {"id": 0, "type": "general_physician", "treats": [0, 1, 2, 3, 4], "can_treat": [5, 6]},
@@ -16,7 +16,16 @@ DOCTOR_LIST = [
 
 CAN_DIE = [5, 7, 8, 9, 10, 16, 17]
 
+
 class HospitalEnv:
+    def __init__(self, config):
+        self.config = config
+        self.reset()
+
+    def get_normalized_score(self):
+        EPS = 1e-6
+        score = 1 / (1 + math.exp(-self.point / 200))
+        return max(EPS, min(1.0 - EPS, score))
     def __init__(self, config):
         self.config = config
         self.reset()
@@ -80,16 +89,17 @@ class HospitalEnv:
             "time_left": random.randint(10, 30),
             "time_takes": random.randint(2, 6),
             "can_die": condition_id in CAN_DIE,
-            "arrival_time": time.time()
+            "arrival_time": self.step_count
         }
 
     def step(self, action):
+        if self.config["steps"] == 0:
+            return self.state(), 0.0, True, {"score": self.get_normalized_score()}
+        prev_point = self.point
         self.step_count += 1
-
         # Generate new patients
         for _ in range(self.config.get("spawn_rate", 1)):
             self.generate_patient()
-
         # waiting penalty
         self.total_wait_time += sum(p["severity"] for p in self.patients.values())
         waiting_penalty = sum(p["severity"] * 0.3 for p in self.patients.values())
@@ -97,22 +107,19 @@ class HospitalEnv:
         # apply action
         if action.get("type") == "assign":
             self._assign(action)
-
         # update doctors
         self._update_doctors()
-
         # update patients
         self._update_patients()
-
         done = self.step_count >= self.config["steps"]
-
-        return self.state(), self.point, done, {}
+        reward = self.point - prev_point
+        return self.state(), reward, done, {"score": self.get_normalized_score()}
 
     def _assign(self, action):
         doctor_id = action.get("doctor_id")
         patient_id = action.get("patient_id")
 
-        if patient_id not in self.patients:
+        if patient_id not in self.patients or doctor_id not in self.doctors:
             return
 
         # switching
