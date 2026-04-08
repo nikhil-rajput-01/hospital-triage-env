@@ -122,8 +122,16 @@ def run_simulation(task="easy"):
         if done:
             break
 
-    final_score = result.get("info", {}).get("score", 0.1) if 'result' in locals() else 0.5
-    final_score = max(1e-6, min(1.0 - 1e-6, final_score))
+    # Safely extract score from environment
+    if 'result' in locals() and isinstance(result, dict):
+        final_score = result.get("info", {}).get("score")
+        if final_score is None:
+            final_score = 0.5
+    else:
+        final_score = 0.5
+    
+    # Ensure score is strictly in (0, 1)
+    final_score = max(1e-3, min(1.0 - 1e-3, float(final_score)))
     print(f"[END] task={task} score={final_score} steps={step_count}", flush=True)
     return final_score
 
