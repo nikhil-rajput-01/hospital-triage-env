@@ -23,7 +23,7 @@ class HospitalEnv:
         self.reset()
 
     def get_normalized_score(self):
-        EPS = 1e-6
+        EPS = 1e-3
         score = 1 / (1 + math.exp(-self.point / 200))
         return max(EPS, min(1.0 - EPS, score))
     def __init__(self, config):
