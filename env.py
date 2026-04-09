@@ -36,17 +36,13 @@ class HospitalEnv:
         self.patients = {}
         self.busy_doctors = {}
         self.doctor_current_patient = {}
-
         self.patient_counter = 0
-
         self.point = 0
         self.total_generated = 0
         self.total_treated = 0
         self.total_died = 0
         self.total_wait_time = 0
-
         self.step_count = 0
-
         return self.state()
 
     def state(self):
